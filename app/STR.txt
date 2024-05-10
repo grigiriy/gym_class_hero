@@ -1,0 +1,61 @@
+project_root/
+│
+├── app/
+│   ├── Models/                     # Domain Layer
+│   │   ├── User.php                # Модель пользователя
+│   │   └── ...                     # Другие модели, если необходимы
+│   │
+│   ├── Services/                   # Application Layer
+│   │   ├── AuthenticationService.php  # Сервис аутентификации
+│   │   ├── AuthorizationService.php   # Сервис авторизации
+│   │   └── Contracts/              # Интерфейсы сервисов для Dependency Inversion
+│   │       ├── AuthenticationServiceInterface.php
+│   │       └── AuthorizationServiceInterface.php
+│   │
+│   ├── Repositories/               # Application Layer (может частично пересекаться с Domain)
+│   │   ├── UserRepository.php      # Реализация репозитория пользователей
+│   │   └── Contracts/              # Интерфейсы репозиториев для Dependency Inversion
+│   │       └── UserRepositoryInterface.php
+│   │
+│   ├── Http/                       # Presentation Layer
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.php  # Контроллер для авторизации
+│   │   │   └── ...
+│   │   ├── Middleware/
+│   │   │   ├── Authenticate.php    # Middleware для аутентификации
+│   │   │   └── ...
+│   │   └── Requests/               # Если используешь Request Validation
+│   │       ├── LoginRequest.php    # Request для валидации данных логина
+│   │       └── ...
+│   │
+│   ├── Providers/
+│   │   └── AppServiceProvider.php  # Связывание интерфейсов с их конкретными реализациями
+│   │
+│   └── ...
+│
+├── database/                       # Схема базы данных и миграции
+│   ├── migrations/
+│   └── ...
+│
+├── routes/
+│   ├── web.php                     # Маршруты веб-интерфейса
+│   └── api.php                     # API-маршруты, если используются
+│
+├── resources/
+│   ├── views/                      # Шаблоны представлений
+│   │   ├── auth/
+│   │   │   ├── login.blade.php     # Шаблон страницы входа
+│   │   │   └── ...
+│   │   └── ...
+│   └── ...
+│
+└── ...
+
+
+
+
+
+В этой структуре:
+Domain Layer реализован в папке app/Models/, где User.php обычно уже есть в стандартной установке Laravel.
+Application Layer содержит логику приложения, включая сервисы (app/Services/) и репозитории (app/Repositories/). В этом слое также находятся интерфейсы, позволяющие реализовать Dependency Inversion Principle, частью SOLID принципов.
+Presentation Layer включает в себя контроллеры (app/Http/Controllers/) и, возможно, запросы на валидацию (app/Http/Requests/) и шаблоны представлений (resources/views/), а также маршруты (routes/).
