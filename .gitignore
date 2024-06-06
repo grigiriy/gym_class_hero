@@ -18,6 +18,7 @@ yarn-error.log
 /.idea
 /.vscode
 composer.phar
-.DS_Store
 public_html
-composer.phar
+docker-compose.yml
+dockerfile
+phpmyadmin/
