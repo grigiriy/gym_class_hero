@@ -9,8 +9,12 @@ use App\Exercise\Repositories\Contracts\ExerciseRepositoryInterface;
 use App\Exercise\Repositories\ExerciseRepository;
 use App\Set\Repositories\Contracts\SetRepositoryInterface;
 use App\Set\Repositories\SetRepository;
+use App\Set\Services\Contracts\SetServiceInterface;
+use App\Set\Services\SetService;
 use App\Workout\Repositories\Contracts\WorkoutRepositoryInterface;
 use App\Workout\Repositories\WorkoutRepository;
+use App\Workout\Services\Contracts\WorkoutServiceInterface;
+use App\Workout\Services\WorkoutService;
 use App\User\Repositories\Contracts\UserRepositoryInterface;
 use App\User\Repositories\UserRepository;
 use App\User\Services\Contracts\AuthenticationServiceInterface;
@@ -22,11 +26,16 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // Repositories
         $this->app->bind(TrainingRepositoryInterface::class, TrainingRepository::class);
         $this->app->bind(ExerciseRepositoryInterface::class, ExerciseRepository::class);
         $this->app->bind(SetRepositoryInterface::class, SetRepository::class);
         $this->app->bind(WorkoutRepositoryInterface::class, WorkoutRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+
+        // Services
+        $this->app->bind(SetServiceInterface::class, SetService::class);
+        $this->app->bind(WorkoutServiceInterface::class, WorkoutService::class);
         $this->app->bind(AuthenticationServiceInterface::class, AuthenticationService::class);
         $this->app->bind(AuthorizationServiceInterface::class, AuthorizationService::class);
     }
