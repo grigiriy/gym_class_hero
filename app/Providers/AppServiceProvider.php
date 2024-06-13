@@ -21,6 +21,9 @@ use App\User\Services\Contracts\AuthenticationServiceInterface;
 use App\User\Services\AuthenticationService;
 use App\User\Services\Contracts\AuthorizationServiceInterface;
 use App\User\Services\AuthorizationService;
+use App\User\Auth\TelegramGuard;
+use App\User\Auth\TelegramUserProvider;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +45,18 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Auth::provider('telegram', function ($app, array $config) {
+            return new TelegramUserProvider();
+        });
+
+        Auth::extend('telegram', function ($app, $name, array $config) {
+            $provider = Auth::createUserProvider($config['provider'] ?? null);
+
+            return new TelegramGuard(
+                $provider,
+                $app['request'],
+                $app['config']['services.telegram.bot_token'] ?? ''
+            );
+        });
     }
 }

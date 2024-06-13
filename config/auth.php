@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'tgwebapp' => [
+            'driver' => 'telegram',
+            'provider' => 'users',
+        ],
     ],
 
     /*
