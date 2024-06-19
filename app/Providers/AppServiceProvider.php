@@ -5,8 +5,12 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Training\Repositories\Contracts\TrainingRepositoryInterface;
 use App\Training\Repositories\TrainingRepository;
+use App\Training\Services\Contracts\TrainingServiceInterface;
+use App\Training\Services\TrainingService;
 use App\Exercise\Repositories\Contracts\ExerciseRepositoryInterface;
 use App\Exercise\Repositories\ExerciseRepository;
+use App\Exercise\Services\Contracts\ExerciseServiceInterface;
+use App\Exercise\Services\ExerciseService;
 use App\Set\Repositories\Contracts\SetRepositoryInterface;
 use App\Set\Repositories\SetRepository;
 use App\Set\Services\Contracts\SetServiceInterface;
@@ -37,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
 
         // Services
+        $this->app->bind(TrainingServiceInterface::class, TrainingService::class);
+        $this->app->bind(ExerciseServiceInterface::class, ExerciseService::class);
         $this->app->bind(SetServiceInterface::class, SetService::class);
         $this->app->bind(WorkoutServiceInterface::class, WorkoutService::class);
         $this->app->bind(AuthenticationServiceInterface::class, AuthenticationService::class);
