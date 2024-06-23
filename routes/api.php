@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\TrainingController;
 use App\Http\Controllers\Api\V1\ExerciseController;
+use App\Http\Controllers\Api\V1\SetController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -12,4 +13,9 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/trainings/{trainingId}/exercises', [ExerciseController::class, 'store']);
     Route::delete('/exercises/{id}', [ExerciseController::class, 'destroy']);
+
+    Route::get('/exercises/{exerciseId}/sets', [SetController::class, 'index']);
+    Route::post('/exercises/{exerciseId}/sets', [SetController::class, 'store']);
+    Route::patch('/sets/{id}', [SetController::class, 'update']);
+    Route::delete('/sets/{id}', [SetController::class, 'destroy']);
 });
