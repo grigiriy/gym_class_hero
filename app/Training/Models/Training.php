@@ -25,6 +25,11 @@ class Training extends Model
         'time_end',
     ];
 
+    protected $casts = [
+        'time_start' => 'datetime',
+        'time_end' => 'datetime',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
