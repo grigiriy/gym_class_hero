@@ -10,7 +10,7 @@ class TrainingRepository implements TrainingRepositoryInterface
 {
     public function find(int $id): ?Training
     {
-        return Training::find($id);
+        return Training::with(['exercises.sets'])->find($id);
     }
 
     public function create(array $attributes): Training
@@ -20,7 +20,7 @@ class TrainingRepository implements TrainingRepositoryInterface
 
     public function findByUserId(int $userId): Collection
     {
-        return Training::where('user_id', $userId)->get();
+        return Training::with(['exercises.sets'])->where('user_id', $userId)->get();
     }
 
     public function delete(Training $training): bool
