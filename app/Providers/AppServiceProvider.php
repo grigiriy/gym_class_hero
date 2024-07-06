@@ -25,8 +25,8 @@ use App\User\Services\Contracts\AuthenticationServiceInterface;
 use App\User\Services\AuthenticationService;
 use App\User\Services\Contracts\AuthorizationServiceInterface;
 use App\User\Services\AuthorizationService;
-use App\User\Auth\TelegramGuard;
-use App\User\Auth\TelegramUserProvider;
+use App\Auth\Guards\TelegramGuard;
+use App\Auth\Providers\TelegramUserProvider;
 use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
