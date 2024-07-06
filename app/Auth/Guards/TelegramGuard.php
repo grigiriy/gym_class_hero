@@ -44,7 +44,7 @@ class TelegramGuard implements Guard
         return false;
     }
 
-    public function setUser(Authenticatable $user)
+    public function setUser(\Illuminate\Contracts\Auth\Authenticatable $user)
     {
         $this->user = $user;
     }
@@ -52,6 +52,11 @@ class TelegramGuard implements Guard
     public function check()
     {
         return $this->user() !== null;
+    }
+
+    public function hasUser(): bool
+    {
+        return $this->user !== null;
     }
 
     public function guest()
