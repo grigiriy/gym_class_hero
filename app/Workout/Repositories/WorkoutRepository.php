@@ -10,7 +10,7 @@ class WorkoutRepository implements WorkoutRepositoryInterface
 {
     public function find(int $id): ?Workout
     {
-        return Workout::find($id);
+        return Workout::with('exercises')->find($id);
     }
 
     public function create(array $attributes): Workout
@@ -25,6 +25,6 @@ class WorkoutRepository implements WorkoutRepositoryInterface
 
     public function findByUserId(int $userId): Collection
     {
-        return Workout::where('user_id', $userId)->get();
+        return Workout::with('exercises')->where('user_id', $userId)->get();
     }
 }

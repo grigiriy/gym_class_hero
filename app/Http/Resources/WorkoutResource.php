@@ -13,6 +13,7 @@ class WorkoutResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'name' => $this->name,
+            'exercises' => ExerciseResource::collection($this->whenLoaded('exercises')),
             'created_at' => $this->created_at,
         ];
     }

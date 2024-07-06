@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\WorkoutResource;
+use App\Exercise\Services\Contracts\ExerciseServiceInterface;
 use App\Workout\Services\Contracts\WorkoutServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,7 +12,8 @@ use Illuminate\Http\Request;
 class WorkoutController extends Controller
 {
     public function __construct(
-        private readonly WorkoutServiceInterface $workoutService
+        private readonly WorkoutServiceInterface $workoutService,
+        private readonly ExerciseServiceInterface $exerciseService
     ) {}
 
     public function index(Request $request)
@@ -74,5 +76,42 @@ class WorkoutController extends Controller
         $this->workoutService->deleteWorkout($workout);
 
         return new JsonResponse(null, 204);
+    }
+
+    public function storeExercise(Request $request, int $workoutId)
+    {
+        $workout = $this->workoutService->getWorkoutById($workoutId);
+
+        if (!$workout) {
+            return new JsonResponse(['error' => 'Workout not found'], 404);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'sort_order' => 'nullable|integer',
+        ]);
+
+        $exercise = $this->exerciseService->createExercise([
+            'workout_id' => $workoutId,
+            'name' => $request->input('name'),
+            'sort_order' => $request->input('sort_order', 0),
+        ]);
+
+        return new WorkoutResource($workout->fresh(['exercises']));
+    }
+
+    public function destroyExercise(int $id)
+    {
+        $exercise = $this->exerciseService->getExerciseById($id);
+
+        if (!$exercise || !$exercise->workout_id) {
+            return new JsonResponse(['error' => 'Exercise not found'], 404);
+        }
+
+        $workoutId = $exercise->workout_id;
+        $this->exerciseService->deleteExercise($exercise);
+
+        $workout = $this->workoutService->getWorkoutById($workoutId);
+        return new WorkoutResource($workout->fresh(['exercises']));
     }
 }

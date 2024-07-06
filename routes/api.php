@@ -11,6 +11,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/trainings', [TrainingController::class, 'store']);
     Route::get('/trainings/{id}', [TrainingController::class, 'show']);
     Route::patch('/trainings/{id}/finish', [TrainingController::class, 'finish']);
+    Route::post('/trainings/{id}/apply-preset/{workoutId}', [TrainingController::class, 'applyPreset']);
 
     Route::post('/trainings/{trainingId}/exercises', [ExerciseController::class, 'store']);
     Route::delete('/exercises/{id}', [ExerciseController::class, 'destroy']);
@@ -25,4 +26,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
     Route::patch('/workouts/{id}', [WorkoutController::class, 'update']);
     Route::delete('/workouts/{id}', [WorkoutController::class, 'destroy']);
+    Route::post('/workouts/{workoutId}/exercises', [WorkoutController::class, 'storeExercise']);
+    Route::delete('/workouts/exercises/{id}', [WorkoutController::class, 'destroyExercise']);
 });
