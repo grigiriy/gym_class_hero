@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Training\Models\Training;
+use App\Workout\Models\Workout;
 use App\Set\Models\Set;
 use Database\Factories\ExerciseFactory;
 
@@ -23,6 +24,7 @@ class Exercise extends Model
 
     protected $fillable = [
         'training_id',
+        'workout_id',
         'name',
         'sort_order',
     ];
@@ -30,6 +32,11 @@ class Exercise extends Model
     public function training(): BelongsTo
     {
         return $this->belongsTo(Training::class);
+    }
+
+    public function workout(): BelongsTo
+    {
+        return $this->belongsTo(Workout::class);
     }
 
     public function sets(): HasMany
