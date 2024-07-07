@@ -1,38 +1,55 @@
 #!/bin/bash
-# Quick setup script for shared hosting
-# Run this via SSH after uploading files
+# GCH Quick Setup — run in hosting console
+# Usage: bash setup.sh
 
-echo "=== GCH Backend Setup ==="
+echo "=== GCH Setup ==="
 
-# 1. Create database
-touch database/database.sqlite
-chmod 664 database/database.sqlite
-
-# 2. Copy .env
+# 1. Create .env from template
 if [ ! -f .env ]; then
-    cp .env.example .env
-    echo "Created .env from .env.example"
-    echo "EDIT .env before continuing!"
-    exit 1
+    cp .env.production .env
+    echo "Created .env from .env.production"
+else
+    echo ".env already exists"
 fi
 
-# 3. Generate app key
+# 2. Generate APP_KEY
 php artisan key:generate --force
+echo "APP_KEY generated"
+
+# 3. Create database
+touch database/database.sqlite
+chmod 664 database/database.sqlite
+echo "Database created"
 
 # 4. Run migrations
 php artisan migrate --force
+echo "Migrations complete"
 
-# 5. Seed (optional)
-read -p "Run seed? (y/n) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    php artisan db:seed --force
-fi
+# 5. Seed
+php artisan db:seed --force
+echo "Database seeded"
 
 # 6. Set permissions
-chmod -R 755 storage bootstrap/cache
+chmod -R 755 storage
+chmod -R 755 bootstrap/cache
 chmod -R 777 storage/logs
+echo "Permissions set"
+
+# 7. Create storage link
+php artisan storage:link --force
+echo "Storage link created"
+
+# 8. Clear cache
+php artisan config:clear
+php artisan cache:clear
+echo "Cache cleared"
 
 echo ""
 echo "=== Setup complete! ==="
-echo "Make sure your domain points to the 'public/' directory."
+echo ""
+echo "API URL: https://botiques.grigiriy.ru/gch/api/v1/trainings"
+echo ""
+echo "TODO:"
+echo "1. Edit .env and set DB_DATABASE to correct path"
+echo "2. Delete public/install.php for security"
+echo ""

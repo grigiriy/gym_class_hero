@@ -8,19 +8,18 @@
 ## Steps
 
 ### 1. Upload files
-Upload the entire `backend/` directory to your hosting via FTP/File Manager.
+Upload the entire `backend/` contents to `~/botiques.grigiriy/gch/` via FTP/File Manager.
 
-### 2. Create database.sqlite
+### 2. Create .env
+Copy `.env.production` to `.env` and update:
+- `DB_DATABASE` — full path to database.sqlite (ask hosting support if unsure)
+- `APP_KEY` — run `php artisan key:generate` in console
+
+### 3. Create database
 ```bash
 touch database/database.sqlite
 chmod 664 database/database.sqlite
 ```
-
-### 3. Edit .env
-Copy `.env.production` to `.env` and update:
-- `APP_URL` — your domain
-- `APP_KEY` — generate new one: `php artisan key:generate`
-- `DB_DATABASE` — full path to database.sqlite
 
 ### 4. Run migrations
 ```bash
@@ -35,46 +34,56 @@ chmod -R 755 bootstrap/cache
 chmod -R 777 storage/logs
 ```
 
-### 6. Configure .htaccess
-The `public/.htaccess` file should handle Laravel routing. If not, create it:
-
-```apache
-<IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
-    RewriteEngine On
-
-    # Handle Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
-</IfModule>
+### 6. Create storage link
+```bash
+php artisan storage:link
 ```
 
-### 7. Cron job (optional)
-For queues/scheduler:
+### 7. Delete install.php
 ```bash
-* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
+rm public/install.php
 ```
 
 ## File structure on hosting
 ```
-public_html/          (or your domain root)
+gch/                      ← your domain root (or subfolder)
+├── .htaccess             ← redirects to public/
+├── index.php             ← fallback redirect
 ├── app/
 ├── bootstrap/
 ├── config/
 ├── database/
-│   └── database.sqlite
+│   ├── database.sqlite
+│   └── migrations/
 ├── public/
-│   ├── index.php     ← Point domain to this
-│   └── .htaccess
+│   ├── .htaccess         ← Laravel routing
+│   ├── index.php         ← Laravel entry point
+│   └── storage → ../storage/app/public
 ├── resources/
 ├── routes/
 ├── storage/
+├── vendor/
 ├── .env
 └── artisan
 ```
 
-**IMPORTANT:** Point your domain to the `public/` directory, not the project root!
+## API URL
+Backend is accessible at: `https://botiques.grigiriy.ru/gch/api/v1/trainings`
+
+## Troubleshooting
+
+### "Not Found" or 403
+- Check that `.htaccess` exists in `gch/` root (not just `public/`)
+- Check `AllowOverride All` in Apache config (ask hosting support)
+
+### "500 Server Error"
+- Check `storage/logs/laravel.log` for errors
+- Run `php artisan config:clear` and `php artisan cache:clear`
+
+### "Class not found" or autoload errors
+- Run `composer dump-autoload` (if composer available on hosting)
+- Or re-upload the `vendor/` directory
+
+### Database errors
+- Check `DB_DATABASE` path in `.env` is correct absolute path
+- Run `php artisan migrate --force` again
