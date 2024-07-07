@@ -7,6 +7,63 @@ use App\Http\Controllers\Api\V1\WorkoutController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
+    Route::get('/debug', function (\Illuminate\Http\Request $request) {
+        $initData = $request->query('init_data');
+
+        if (!$initData) {
+            return response()->json(['error' => 'Pass ?init_data=... to test verification']);
+        }
+
+        $token = config('services.telegram.bot_token');
+        $parsed = [];
+        foreach (explode('&', $initData) as $pair) {
+            $parts = explode('=', $pair, 2);
+            if (count($parts) === 2) {
+                $key = urldecode($parts[0]);
+                $value = urldecode($parts[1]);
+                $parsed[$key] = $key === 'user' ? substr($value, 0, 30) . '...' : $value;
+            }
+        }
+
+        $dataNoHash = [];
+        foreach (explode('&', $initData) as $pair) {
+            $parts = explode('=', $pair, 2);
+            if (count($parts) === 2) {
+                $key = urldecode($parts[0]);
+                $value = urldecode($parts[1]);
+                if ($key !== 'hash') {
+                    $dataNoHash[$key] = $value;
+                }
+            }
+        }
+        ksort($dataNoHash);
+        $pairs = [];
+        foreach ($dataNoHash as $k => $v) {
+            $pairs[] = "{$k}={$v}";
+        }
+        $dataCheckString = implode("\n", $pairs);
+
+        $secretKey = hash_hmac('sha256', $token, 'WebAppData');
+        $calculatedHash = hash_hmac('sha256', $dataCheckString, $secretKey);
+
+        $hashFromInit = $parsed['hash'] ?? 'missing';
+
+        $token = config('services.telegram.bot_token');
+
+        return response()->json([
+            'parsed_keys' => array_keys($parsed),
+            'received_hash' => $hashFromInit,
+            'calculated_hash' => $calculatedHash,
+            'hash_match' => hash_equals($calculatedHash, $hashFromInit),
+            'data_check_string' => $dataCheckString,
+            'token_first4' => substr($token, 0, 4),
+            'token_last4' => substr($token, -4),
+            'token_length' => strlen($token),
+        ]);
+    });
+});
+
+Route::prefix('v1')->middleware('auth:tgwebapp')->group(function () {
     Route::get('/trainings', [TrainingController::class, 'index']);
     Route::post('/trainings', [TrainingController::class, 'store']);
     Route::get('/trainings/{id}', [TrainingController::class, 'show']);
