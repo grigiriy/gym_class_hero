@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\V1\SetController;
 use App\Http\Controllers\Api\V1\WorkoutController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware('auth:tgwebapp')->group(function () {
+Route::prefix('v1')->group(function () {
     Route::get('/trainings', [TrainingController::class, 'index']);
     Route::post('/trainings', [TrainingController::class, 'store']);
     Route::get('/trainings/{id}', [TrainingController::class, 'show']);
